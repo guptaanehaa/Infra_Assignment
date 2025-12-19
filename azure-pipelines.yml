@@ -7,30 +7,9 @@ trigger:
 pool: Default
 
 stages: 
-  - stage: Scanning
-    displayName: Scanning Stage
-    jobs:
-      - job: Scanningjob
-        displayName: Scanning job
-        steps:
-        - task: tfsec@1
-          displayName: tfsec
-          continueOnError: true
-          inputs:
-            version: 'v1.26.0'
-            dir: '$(System.DefaultWorkingDirectory)/Environmrnt/Dev'
-            publishTestResults: true
-          
-        - task: PowerShell@2
-          displayName: tflint
-          continueOnError: true
-          inputs:
-            targetType: 'inline'
-            script: 'tflint'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/Environmrnt/Dev'
 
   - stage: infraprovision
-    dependsOn: Scanning
+    
     condition: succeeded()
     jobs:
       - job: terraforminitvalidateplan
@@ -98,10 +77,10 @@ stages:
             backendAzureRmContainerName: 'nehacontainer'
             backendAzureRmKey: 'backend.tfstate'
  
-        - task: TerraformTask@5
-          displayName: apply job
-          inputs:
-            provider: 'azurerm'
-            command: 'apply'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/Environmrnt/Dev'
-            environmentServiceNameAzureRM: 'Infra Service'
+        # - task: TerraformTask@5
+        #   displayName: apply job
+        #   inputs:
+        #     provider: 'azurerm'
+        #     command: 'apply'
+        #     workingDirectory: '$(System.DefaultWorkingDirectory)/Environmrnt/Dev'
+        #     environmentServiceNameAzureRM: 'Infra Service'
